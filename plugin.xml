@@ -28,6 +28,8 @@
     <source-file src="src/ios/AppSetup.m"/>
     <header-file src="src/ios/MainViewController+keyboard.h" />
     <source-file src="src/ios/MainViewController+keyboard.m" />
+    <header-file src="src/ios/CDVWKWebViewEngine+LocalStorage.h" />
+    <source-file src="src/ios/CDVWKWebViewEngine+LocalStorage.m" />
 
     <config-file target="*-Info.plist" parent="UIBackgroundModes">
       <array>
