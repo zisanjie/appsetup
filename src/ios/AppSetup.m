@@ -80,7 +80,7 @@ static BOOL applicationIsActive;
         }
     }
     else{
-        if ([[self getTopPresentedViewController] isKindOfClass:[CDVThemeableBrowserViewController class]]) {
+        if ([[self getTopPresentedViewController] isKindOfClass:[CDVThemeableBrowserNavigationController class]]) {
             
             return;
         }
