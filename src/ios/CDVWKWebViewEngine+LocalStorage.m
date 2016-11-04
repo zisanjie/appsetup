@@ -20,7 +20,7 @@
 -(void)setLocalStorageToWebView:(WKWebView *)webView{
     NSError *error = nil;
     NSString *libDir = [NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) lastObject];
-    NSLog(@"libDir:%@",libDir);
+    //NSLog(@"libDir:%@",libDir);
     NSString *webviewlocalStorageDir= [libDir stringByAppendingPathComponent:@"WebKit/LocalStorage"];
     NSString *wkWebviewlocalStorageDir= [libDir stringByAppendingPathComponent:@"WebKit/WebsiteData/LocalStorage"];
     NSFileManager* fm=[NSFileManager defaultManager];
@@ -33,7 +33,7 @@
         fileList = [fm contentsOfDirectoryAtPath:webviewlocalStorageDir error:&error];
         for (NSString *file in fileList) {
             
-            if ([file hasPrefix:@"http"]) {
+            if ([file hasPrefix:@"http_meteor.local"]) {
                 NSString *path = [webviewlocalStorageDir stringByAppendingPathComponent:file];
                 NSData *data = [NSData dataWithContentsOfFile:path];
                 NSString *fileExtensionName = [file componentsSeparatedByString:@"."].lastObject;
@@ -50,7 +50,7 @@
         
         NSNumber *port = webView.URL.port;
         for (NSString *fileExtensionName in localStorageDic.allKeys) {
-            NSLog(@"data:%@",localStorageDic[fileExtensionName]);
+            //NSLog(@"data:%@",localStorageDic[fileExtensionName]);
             NSString *path = [wkWebviewlocalStorageDir stringByAppendingPathComponent:[NSString stringWithFormat:@"http_localhost_%@.%@",port,fileExtensionName]];
             
             [localStorageDic[fileExtensionName] writeToFile:path options:NSDataWritingAtomic error:&error];
