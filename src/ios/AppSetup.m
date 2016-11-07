@@ -3,13 +3,23 @@
 #import "MainViewController.h"
 #import "CDVThemeableBrowser.h"
 #import "hotshare-Swift.h"
-static BOOL applicationIsActive;
+
+@interface AppSetup ()
+{
+    BOOL applicationWillEnterForeground;
+}
+
+@end
+
 
 @implementation AppSetup
 
 -(void)pluginInitialize{
     
-    
+    [[NSNotificationCenter defaultCenter]addObserver:self
+                                            selector:@selector(appSetupPluginWillEnterForegroundNotification:)
+                                                name:UIApplicationWillEnterForegroundNotification
+                                              object:nil];
     [[NSNotificationCenter defaultCenter]addObserver:self
                                             selector:@selector(appSetupPluginOnApplicationDidBecomeActive:)
                                                 name:UIApplicationDidBecomeActiveNotification
@@ -21,16 +31,24 @@ static BOOL applicationIsActive;
                                               object:nil];
 }
 
+
+-(void)appSetupPluginWillEnterForegroundNotification:(NSNotification *)notification {
+    NSLog(@"appSetupPluginWillEnterForegroundNotification!");
+    applicationWillEnterForeground = true;
+}
+
 - (void)appSetupPluginDidEnterBackgroundNotification:(NSNotification *)notification{
     
     NSLog(@"appSetupPluginDidEnterBackgroundNotification!");
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     WKWebView *webview = (WKWebView *)self.webView;
     NSLog(@"webview url:%@",webview.URL.absoluteString);
-    [defaults setObject:webview.URL.absoluteString forKey:@"webViewURL"];
-    [defaults synchronize];
+    if (webview.URL) {
+        [defaults setObject:webview.URL.absoluteString forKey:@"webViewURL"];
+        [defaults synchronize];
+    }
+    applicationWillEnterForeground = false;
 }
-
 
 - (void)appSetupPluginOnApplicationDidBecomeActive:(NSNotification *)notification {
     
@@ -46,32 +64,29 @@ static BOOL applicationIsActive;
         
         if (rootViewController.webView) {
             
-            if (applicationIsActive) {
+            if (applicationWillEnterForeground) {
                 
              [rootViewController.view bringSubviewToFront:rootViewController.webView];
             }
             if ([rootViewController.webView isKindOfClass:[WKWebView class]]) {
                     
                 WKWebView *webview = (WKWebView *)rootViewController.webView;
-                    
-                if (webview.URL) {
+                if (applicationWillEnterForeground) {
+                    if (webview.URL) {
+                        NSLog(@"WKWebView is load：%@",webview.URL);
+                        isBlankScreen = NO;
+                    }
+                    else{
+//                        [self showAlertControllerWith:@"load a null url！Reloading" type:@"url"];
+//                        if ([webview isLoading]) {
+//                            [webview stopLoading];
+//                        }
+//                        NSString *urlStr = [defaults objectForKey:@"webViewURL"];
+//                        NSURLRequest* request = [NSURLRequest requestWithURL:[NSURL URLWithString:urlStr] cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:20.0];
+//                        [webview loadRequest:request];
                         
-                    NSLog(@"WKWebView is load：%@",webview.URL);
-                    
-                    //[defaults setObject:webview.URL.absoluteString forKey:@"webViewURL"];
-                    //[defaults synchronize];
-                    
-                    isBlankScreen = NO;
-                    
-                }
-                else{
-                    
-                    [self showAlertControllerWith:@"load a null url！Reloading" type:@"url"];
-                    //重新加载
-                    NSString *urlStr = [defaults objectForKey:@"webViewURL"];
-                    
-                    [webview loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:urlStr]]];
-                    
+                        [self.viewController viewDidLoad];
+                    }
                 }
             }
         }
@@ -87,7 +102,6 @@ static BOOL applicationIsActive;
         [self showAlertControllerWith:@"MainViewController has been covered!" type:@"covered"];
     }
     
-    applicationIsActive = YES;
 }
 
 -(void)showAlertControllerWith:(NSString *)message type:(NSString *)type{
