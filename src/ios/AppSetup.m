@@ -41,11 +41,13 @@
     
     NSLog(@"appSetupPluginDidEnterBackgroundNotification!");
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    WKWebView *webview = (WKWebView *)self.webView;
-    NSLog(@"webview url:%@",webview.URL.absoluteString);
-    if (webview.URL) {
-        [defaults setObject:webview.URL.absoluteString forKey:@"webViewURL"];
-        [defaults synchronize];
+    if ([self.webView isKindOfClass:[WKWebView class]]) {
+        WKWebView *webview = (WKWebView *)self.webView;
+        NSLog(@"webview url:%@",webview.URL.absoluteString);
+        if (webview.URL) {
+            [defaults setObject:webview.URL.absoluteString forKey:@"webViewURL"];
+            [defaults synchronize];
+        }
     }
     applicationWillEnterForeground = false;
 }
