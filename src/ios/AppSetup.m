@@ -2,7 +2,7 @@
 #import <WebKit/WebKit.h>
 #import "MainViewController.h"
 #import "CDVThemeableBrowser.h"
-#import "hotshare-Swift.h"
+//#import "hotshare-Swift.h"
 
 @interface AppSetup ()
 {
@@ -95,7 +95,7 @@
                             
                         }
                         
-                        [self.viewController viewDidLoad];
+                        //[self.viewController viewDidLoad];
                         
                     }
                     else{
