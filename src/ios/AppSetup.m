@@ -51,10 +51,28 @@
                 [path appendFormat:@"?%@",[webview.URL query]];
             }
             [defaults setObject:path forKey:@"webViewURL_path"];
+            [defaults setValue:[webview.URL port] forKey:@"webViewURL_port"];
+            [defaults setValue:@"false" forKey:@"webReloaded"];
             [defaults synchronize];
         }
     }
     applicationWillEnterForeground = false;
+}
+
+
+- (void)reloadWebViewHandle:(WKWebView *)webview withString:(NSString *)urlStr{
+    if ([webview isLoading]) {
+        [webview stopLoading];
+    };
+    NSURLRequest* request = [NSURLRequest requestWithURL:[NSURL URLWithString:urlStr] cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:20.0];
+    [webview loadRequest:request];
+    
+//    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+//    
+//    [defaults setValue:@"true" forKey:@"webReloaded"];
+//    
+//    [defaults synchronize];
+    
 }
 
 - (void)appSetupPluginOnApplicationDidBecomeActive:(NSNotification *)notification {
@@ -87,31 +105,57 @@
                         if (location_is_blank) {
                             return [self.viewController viewDidLoad];
                         }
+                        BOOL needReload = false;
+                        id localServerPort = [defaults valueForKey:@"localServerPort"];
+                        id port = [defaults valueForKey:@"webViewURL_port"];
+                        
+                        NSString *reloaded = [defaults valueForKey:@"webReloaded"];
+                        
+                        if ([reloaded isEqualToString:@"true"]) {
+                            //已经重新load过
+                            return;
+                        }
+                        if (localServerPort != port) {
+                            needReload = true;
+                        }
                         
                         NSString *path_str = [defaults objectForKey:@"webViewURL_path"];
-                        
                         
                         NSMutableString *pre_path = [NSMutableString stringWithFormat:@"%@",[webview.URL path]];
                         if ([webview.URL query]) {
                             [pre_path appendFormat:@"?%@",[webview.URL query]];
                         }
                         
-                        if ([[webview.URL query] hasPrefix:@"cdvToken="]) {
+                        NSString *authTokenKeyValuePair = [defaults valueForKey:@"authTokenKeyValuePair"];
+                        NSString *hostUrl =  [NSMutableString stringWithFormat:@"http://localhost:%@",localServerPort];
+                        NSString *startPage = [NSMutableString stringWithFormat:@"/?%@",authTokenKeyValuePair];
+                        
+                        if ([path_str hasPrefix:@"/?cdvToken="]) {
                             
-                            return;
+                            if (needReload || ![path_str isEqualToString:startPage]) { //进入后台后存的路径和localserverstart时的不一样
+                                
+                                hostUrl = [hostUrl stringByAppendingString:startPage];
+                                
+                                needReload = true;
+                                
+                                [self reloadWebViewHandle:webview withString:hostUrl];
+                                
+                                return;
+                            }
                         }
                         
                         BOOL location_is_equal = [pre_path isEqualToString:path_str];
                         
-                        if (location_is_equal) {
+                        if (location_is_equal && !needReload) {
                             
                             isBlankScreen = NO;
                             
                             return;
                             
                         }
-                        
-                        [self.viewController viewDidLoad];
+                         [self reloadWebViewHandle:webview withString:hostUrl];
+
+                        //[self.viewController viewDidLoad];
                         
                     }
                     else{
