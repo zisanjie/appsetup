@@ -45,7 +45,12 @@
         WKWebView *webview = (WKWebView *)self.webView;
         NSLog(@"webview url:%@",webview.URL.absoluteString);
         if (webview.URL) {
-            [defaults setObject:webview.URL.absoluteString forKey:@"webViewURL"];
+            NSLog(@"scheme:%@\n host:%@ path:%@ query:%@ ",[webview.URL scheme],[webview.URL host],[webview.URL path],[webview.URL query]);
+            NSMutableString *path = [NSMutableString stringWithFormat:@"%@",[webview.URL path]];
+            if ([webview.URL query]) {
+                [path appendFormat:@"?%@",[webview.URL query]];
+            }
+            [defaults setObject:path forKey:@"webViewURL_path"];
             [defaults synchronize];
         }
     }
@@ -83,9 +88,20 @@
                             return [self.viewController viewDidLoad];
                         }
                         
-                        NSString *urlStr = [defaults objectForKey:@"webViewURL"];
+                        NSString *path_str = [defaults objectForKey:@"webViewURL_path"];
                         
-                        BOOL location_is_equal = [[webview.URL absoluteString] isEqualToString:urlStr];
+                        
+                        NSMutableString *pre_path = [NSMutableString stringWithFormat:@"%@",[webview.URL path]];
+                        if ([webview.URL query]) {
+                            [pre_path appendFormat:@"?%@",[webview.URL query]];
+                        }
+                        
+                        if ([[webview.URL query] hasPrefix:@"cdvToken="]) {
+                            
+                            return;
+                        }
+                        
+                        BOOL location_is_equal = [pre_path isEqualToString:path_str];
                         
                         if (location_is_equal) {
                             
@@ -95,7 +111,7 @@
                             
                         }
                         
-                        //[self.viewController viewDidLoad];
+                        [self.viewController viewDidLoad];
                         
                     }
                     else{
