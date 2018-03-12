@@ -109,7 +109,7 @@
                         id localServerPort = [defaults valueForKey:@"localServerPort"];
                         id port = [defaults valueForKey:@"webViewURL_port"];
                         NSInteger localServerPortInt = [localServerPort integerValue];
-                        NSInteger portInt = [localServerPort integerValue];
+                        NSInteger portInt = [port integerValue];
                         
                         NSString *reloaded = [defaults valueForKey:@"webReloaded"];
                         
