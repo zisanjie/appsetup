@@ -119,7 +119,7 @@
                         }
                         if (localServerPortInt != portInt) {
                             needReload = true;
-                            NSLog(@"WKWebView is needReload #1 %@ %@", localServerPortInt, portInt);
+                            NSLog(@"WKWebView is needReload #1");
                         }
                         
                         NSString *path_str = [defaults objectForKey:@"webViewURL_path"];
