@@ -108,6 +108,8 @@
                         BOOL needReload = false;
                         id localServerPort = [defaults valueForKey:@"localServerPort"];
                         id port = [defaults valueForKey:@"webViewURL_port"];
+                        NSInteger localServerPortInt = [localServerPort integerValue];
+                        NSInteger portInt = [localServerPort integerValue];
                         
                         NSString *reloaded = [defaults valueForKey:@"webReloaded"];
                         
@@ -115,8 +117,9 @@
                             //已经重新load过
                             return;
                         }
-                        if (localServerPort != port) {
+                        if (localServerPortInt != portInt) {
                             needReload = true;
+                            NSLog(@"WKWebView is needReload #1 %@ %@", localServerPortInt, portInt);
                         }
                         
                         NSString *path_str = [defaults objectForKey:@"webViewURL_path"];
