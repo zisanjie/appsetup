@@ -48,7 +48,10 @@
     <config-file target="*-Info.plist" parent="NSPhotoLibraryUsageDescription">
       <string>如果不允许，你将无法在故事贴使用手机中的图片和视频</string>
     </config-file>
-
+          
+    <config-file target="*-Info.plist" parent="NSMicrophoneUsageDescription">
+      <string>如果不允许，你将无法在故事贴使用语音功能</string>
+    </config-file>
 
     <config-file target="*-Info.plist" parent="CFBundleDisplayName">
       <string>故事贴</string>
