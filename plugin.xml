@@ -44,6 +44,14 @@
     <config-file target="*-Info.plist" parent="NSCameraUsageDescription">
       <string>如果不允许，你将无法在故事贴中拍摄照片和视频</string>
     </config-file>
+          
+    <config-file target="*-Info.plist" parent="NSCalendarsUsageDescription">
+      <string>如果不允许，你将无法在故事贴使用日历功能</string>
+    </config-file>
+          
+    <config-file target="*-Info.plist" parent="NSBluetoothPeripheralUsageDescription">
+      <string>如果不允许，你将无法在故事贴使用蓝牙功能</string>
+    </config-file>
 
     <config-file target="*-Info.plist" parent="NSPhotoLibraryUsageDescription">
       <string>如果不允许，你将无法在故事贴使用手机中的图片和视频</string>
